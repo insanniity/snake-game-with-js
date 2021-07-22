@@ -4,9 +4,43 @@ let box = 32;
 let snake = [];
 let direction = "right";
 let food = {
-    x:Math.floor(Math.random()*15+1)*box,
-    y:Math.floor(Math.random()*15+1)*box,
+    x:Math.floor(Math.random()*23+1)*box,
+    y:Math.floor(Math.random()*23+1)*box,
 };
+let jogo;
+let pontos = 0;
+let count = 0;
+let velocidade = 300;
+let lvl = 1;
+let pointsPerLevel = 100;
+let pointsPerComida = 10;
+
+let buttonPlayGame = document.getElementById("playGame");
+
+const atualizaTelaPontos = () => {
+    document.getElementById("placarNumber").innerHTML= pontos;
+}
+
+const atualizaLevel = () => {
+    if(count === pointsPerLevel){
+        count = 0;
+        lvl +=1;
+        velocidade -=30;
+        document.getElementById("levelNumber").innerHTML = lvl;
+        setInterval(iniciarJogo, velocidade)
+    }
+}
+
+
+const buttonHide = () => {
+    buttonPlayGame.classList.add("d-none");
+    jogo = setInterval(iniciarJogo, velocidade);
+    pontos = 0;
+    atualizaTelaPontos();
+}
+
+
+buttonPlayGame.addEventListener('click', buttonHide);
 
 snake[0] = {
     x:8*box,
@@ -15,7 +49,7 @@ snake[0] = {
 
 const criarBG = () => {
     context.fillStyle = "lightgreen";
-    context.fillRect(0,0,16*box, 16*box);
+    context.fillRect(0,0,24*box, 24*box);
 }
 
 const criaCobrinha = () =>{
@@ -42,15 +76,17 @@ const update = (event) => {
 
 const iniciarJogo = () => {
 
-    if (snake[0].x > 15*box && direction === "right") snake[0].x = 0;
-    if (snake[0].x < 0 && direction === "left") snake[0].x = 16 * box;
-    if (snake[0].y > 15*box && direction === "down") snake[0].y = 0;
-    if (snake[0].y < 0 && direction === "up") snake[0].y = 16*box;
+
+    if (snake[0].x > 23*box && direction === "right") snake[0].x = 0;
+    if (snake[0].x < 0 && direction === "left") snake[0].x = 24 * box;
+    if (snake[0].y > 23*box && direction === "down") snake[0].y = 0;
+    if (snake[0].y < 0 && direction === "up") snake[0].y = 24*box;
 
     for (i=1; i< snake.length; i++){
         if (snake[0].x === snake[i].x && snake[0].y === snake[i].y){
             clearInterval(jogo);
-            alert('Game over :(')
+            buttonPlayGame.classList.remove("d-none");
+            alert('Game over :(');
         }
     }
 
@@ -69,20 +105,25 @@ const iniciarJogo = () => {
     if(snakeX !== food.x || snakeY !== food.y){
         snake.pop();
     }else{
-        food.x = Math.floor(Math.random()*15+1)*box;
-        food.y = Math.floor(Math.random()*15+1)*box;
+        pontos+=pointsPerComida;
+        count+=pointsPerComida;
+        atualizaTelaPontos();
+        food.x = Math.floor(Math.random()*23+1)*box;
+        food.y = Math.floor(Math.random()*23+1)*box;
     }
 
+    atualizaLevel();
+
     let newHead = {
-        x: snakeX,
-        y: snakeY,
+            x: snakeX,
+            y: snakeY,
     }
 
     snake.unshift(newHead);
 
 }
 
-let jogo = setInterval(iniciarJogo, 100);
+
 
 
 document.addEventListener('keydown', update);
