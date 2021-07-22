@@ -14,8 +14,19 @@ let velocidade = 300;
 let lvl = 1;
 let pointsPerLevel = 100;
 let pointsPerComida = 10;
-
 let buttonPlayGame = document.getElementById("playGame");
+
+snake[0] = {
+    x:8*box,
+    y:8*box
+}
+
+document.addEventListener ('keyup', (event) => {
+    if(event.code === "ArrowLeft" && direction !== "right") direction = "left";
+    if(event.code === "ArrowUp" && direction !== "down") direction = "up";
+    if(event.code === "ArrowRight" && direction !== "left") direction = "right";
+    if(event.code === "ArrowDown" && direction !== "up") direction = "down";
+}, setTimeout(0.1));
 
 const atualizaTelaPontos = () => {
     document.getElementById("placarNumber").innerHTML= pontos;
@@ -32,20 +43,15 @@ const atualizaLevel = () => {
 }
 
 
-const buttonHide = () => {
+const buttonStart = () => {
     buttonPlayGame.classList.add("d-none");
     jogo = setInterval(iniciarJogo, velocidade);
     pontos = 0;
     atualizaTelaPontos();
 }
 
+buttonPlayGame.addEventListener('click', buttonStart);
 
-buttonPlayGame.addEventListener('click', buttonHide);
-
-snake[0] = {
-    x:8*box,
-    y:8*box
-}
 
 const criarBG = () => {
     context.fillStyle = "lightgreen";
@@ -66,16 +72,7 @@ const drawFood = () => {
 
 
 
-const update = (event) => {
-    if(event.keyCode === 37 && direction !== "right") direction = "left";
-    if(event.keyCode === 38 && direction !== "down") direction = "up";
-    if(event.keyCode === 39 && direction !== "left") direction = "right";
-    if(event.keyCode === 40 && direction !== "up") direction = "down";
-}
-
-
 const iniciarJogo = () => {
-
 
     if (snake[0].x > 23*box && direction === "right") snake[0].x = 0;
     if (snake[0].x < 0 && direction === "left") snake[0].x = 24 * box;
@@ -112,18 +109,14 @@ const iniciarJogo = () => {
         food.y = Math.floor(Math.random()*23+1)*box;
     }
 
-    atualizaLevel();
 
     let newHead = {
             x: snakeX,
             y: snakeY,
     }
 
+    atualizaLevel();
+
     snake.unshift(newHead);
 
 }
-
-
-
-
-document.addEventListener('keydown', update);
